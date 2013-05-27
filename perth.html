@@ -20,6 +20,15 @@
 
     body { margin: 0; padding: 0; }
 
+    #display {
+      position: absolute;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
     #slider {
       height: 10px;
       border: solid 1px black;
@@ -50,7 +59,7 @@
 
 window.addEvent('domready', function() {
 
-  var svg = d3.select("body").append("svg")
+  var svg = d3.select("#display").append("svg")
       .attr("width", window.innerWidth)
       .attr("height", window.innerHeight);
 
@@ -89,13 +98,18 @@ window.addEvent('domready', function() {
       }
 
       svg.append("path")
+          .attr("class", "water")
+          .datum(topojson.feature(perth, perth.objects.rivers))
+          .attr("d", path);
+
+      svg.append("path")
           .attr("class", "park")
           .datum(topojson.feature(perth, perth.objects.parks))
           .attr("d", path);
 
       svg.append("path")
           .attr("class", "water")
-          .datum(topojson.feature(perth, perth.objects.water))
+          .datum(topojson.feature(perth, perth.objects.lakes))
           .attr("d", path);
 
       svg.append("path")

@@ -20,8 +20,11 @@ ogr2ogr -f GeoJSON -where "type IN ('primary', 'secondary', 'tertiary', 'residen
 echo "ogr2ogr on natural.shp (looking for parks)"
 ogr2ogr -f GeoJSON -where "type = 'park'" -clipdst 115.837 -31.92 115.891 -31.99 parks.json shape/natural.shp
 
-echo "ogr2ogr on natural.shp (looking for water)"
-ogr2ogr -f GeoJSON -where "type IN ('water', 'riverbank')" -clipdst 115.837 -31.92 115.891 -31.99 water.json shape/natural.shp
+echo "ogr2ogr on natural.shp (looking for lakes)"
+ogr2ogr -f GeoJSON -where "type = 'water'" -clipdst 115.837 -31.92 115.891 -31.99 lakes.json shape/natural.shp
+
+echo "ogr2ogr on natural.shp (looking for rivers)"
+ogr2ogr -f GeoJSON -where "type = 'riverbank'" -clipdst 115.837 -31.92 115.891 -31.99 rivers.json shape/natural.shp
 
 # use tighter clip bounds on buildings (Vincent St to the Narrows); we really only care about the CBD
 echo "ogr2ogr on buildings.shp"
@@ -29,9 +32,11 @@ ogr2ogr -f GeoJSON -clipdst 115.837 -31.9365 115.891 -31.962 buildings.json shap
 
 
 echo "topojson to combine the above into perth.json"
-topojson -o perth.json water.json parks.json buildings.json roads.json
+topojson -o perth.json rivers.json lakes.json parks.json buildings.json roads.json
+
 
 rm roads.json
 rm parks.json
-rm water.json
+rm lakes.json
+rm rivers.json
 rm buildings.json
