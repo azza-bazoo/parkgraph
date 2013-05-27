@@ -31,6 +31,8 @@ http.createServer(function(request, response) {
         response.writeHead(200, {"Content-Type": "text/html"});
       } else if (/\.js$/.test(filename)) {
         response.writeHead(200, {"Content-Type": "application/javascript"});
+      } else if (/\.css$/.test(filename)) {
+        response.writeHead(200, {"Content-Type": "text/css"});
       } else {
         response.writeHead(200, {"Content-Type": "text/plain"});
       }

@@ -2,159 +2,41 @@
 <head>
 <meta charset="utf-8">
 <title>Parkimorph: because boring subjects like parking deserve pretty pictures too</title>
-  <style type="text/css">
-
-    .road {
-      fill-opacity: 0;
-      stroke: #333;
-    }
-
-    .building {
-      fill: #fafafa;
-      stroke: #aaa;
-    }
-
-    .park { fill: #efe; }
-
-    .water { fill: #eef; }
-
-    body { margin: 0; padding: 0; }
-
-    #display {
-      position: absolute;
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-    }
-
-    #slider {
-      height: 10px;
-      border: solid 1px black;
-    }
-
-    #knob {
-      height: 10px;
-      width: 10px;
-      background: black;
-    }
-
-  </style>
+  <link href="http://fonts.googleapis.com/css?family=Merriweather:300,300italic" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
 <body>
 
 <div id="display"></div>
 
-<div id="slider">
-  <div id="knob"></div>
+<div id="black_box">
+  <div id="blurb">
+    <h1>Parkimorph</h1>
+    <p>A simple visualisation of usage of City of Perth <a href="http://cityofperthparking.com.au/?q=node/109">car parks</a> over one working day.</p>
+    <p>Built as a little plaything in the lead-up to <a href="http://www.govhack.org/locations/perth/">GovHack Perth</a>.</p>
+
+    <p id="loading">One moment, please ...</p>
+  </div>
+
+  <div id="controls" style="display:none">
+    <div id="slider">
+      <div id="knob"></div>
+    </div>
+    <div id="current_value"></div>
+    <div id="credits">
+      map: <a href="http://www.openstreetmap.org/?lat=-31.9605&lon=115.8677&zoom=14">OpenStreetMap</a> and <a href="http://www.bbbike.org/Perth/">BBBike</a>
+      &middot; visualisation: <a href="http://d3js.org/">D3.js</a> (<a href="http://bost.ocks.org/mike/map/">tutorial</a>)
+      &middot; <a href="https://github.com/azza-bazoo/parkimorph">source on GitHub</a>
+      &middot; by <a href="http://hourann.com">Hourann Bosci</a>
+    </div>
+  </div>
 </div>
-<div id="current_value"></div>
 
 <script src="mootools-core-1.4.5-full-nocompat-yc.js"></script>
 <script src="mootools-more-1.4.0.1.js"></script>
 <script src="d3.v3.min.js"></script>
 <script src="topojson.v1.min.js"></script>
-<script type="text/javascript">
-
-window.addEvent('domready', function() {
-
-  var svg = d3.select("#display").append("svg")
-      .attr("width", window.innerWidth)
-      .attr("height", window.innerHeight);
-
-  var radius = d3.scale.linear()
-      .domain([0, 500])
-      .range([4, 20]);
-
-  var colours = d3.scale.linear()
-      .domain([0, 1])
-      .range(["#00cc00", "#ff0000"]);
-
-  var projection = d3.geo.mercator()
-      .center([115.865, -31.958])
-      .translate([Math.floor(window.innerWidth / 2), Math.floor(window.innerHeight / 2)])
-      .scale(1200 * window.innerWidth - 26000);
-  var path = d3.geo.path().projection(projection);
-
-  var valueAt = function(point, time) {
-    return point.properties.spaces[time];
-  }
-
-  var circleColours = function(point, time) {
-    return colours(valueAt(point, time) / point.properties.total);
-  }
-
-  d3.json("map/perth.json", function(error, perth) {
-    d3.json("data/perth-2013-05-27.json", function(error, parking) {
-
-      // assume for now that all points have the same times, again due to laziness
-      var range = Object.keys(parking.features[0].properties.spaces);
-
-      var u = new URI();
-      var initial_time = "05:00";
-      if (u.getData('time') && range.indexOf(u.getData('time')) !== -1) {
-        initial_time = u.getData('time');
-      }
-
-      svg.append("path")
-          .attr("class", "water")
-          .datum(topojson.feature(perth, perth.objects.rivers))
-          .attr("d", path);
-
-      svg.append("path")
-          .attr("class", "park")
-          .datum(topojson.feature(perth, perth.objects.parks))
-          .attr("d", path);
-
-      svg.append("path")
-          .attr("class", "water")
-          .datum(topojson.feature(perth, perth.objects.lakes))
-          .attr("d", path);
-
-      svg.append("path")
-          .attr("class", "building")
-          .datum(topojson.feature(perth, perth.objects.buildings))
-          .attr("d", path);
-
-      svg.append("path")
-          .attr("class", "road")
-          .datum(topojson.feature(perth, perth.objects.roads))
-          .attr("d", path);
-
-
-      svg.selectAll(".symbol")
-          .data(parking.features)
-          .enter().append("path")
-            .attr("class", "symbol");
-
-      var redraw = function(time) {
-        svg.selectAll(".symbol")
-          .style("fill", function(d) { return circleColours(d, time); })
-          .attr("d", path.pointRadius(function(d) { return radius(valueAt(d, time)); }));
-      }
-
-      redraw(initial_time);
-
-      $('slider').setStyle("width", (range.length * 5) + "px")
-
-      var slider = new Slider(
-        $('slider'), $('knob'), {
-        snap: true,
-        range: [ 0, range.length - 1 ],
-        initialStep: range.indexOf(initial_time),
-        onChange: function(index) {
-          $('current_value').set('html', range[index]);
-          redraw(range[index]);
-        }
-      });
-
-    });
-  });
-
-});
-
-</script>
+<script src="parkimorph.js"></script>
 
 </body>
 </html>
