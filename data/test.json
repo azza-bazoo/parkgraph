@@ -1,0 +1,61 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.850721,
+          -31.949693
+        ]
+      },
+      "properties": {
+        "name": "Elder Street",
+        "spaces": 570
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.852321,
+          -31.956051
+        ]
+      },
+      "properties": {
+        "name": "Convention Centre",
+        "spaces": 460
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.862742,
+          -31.953663
+        ]
+      },
+      "properties": {
+        "name": "Pier Street",
+        "spaces": 366
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.861038,
+          -31.951710
+        ]
+      },
+      "properties": {
+        "name": "Citiplace",
+        "spaces": 306
+      }
+    }
+  ]
+}
