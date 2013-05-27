@@ -1,24 +1,38 @@
 <!DOCTYPE html>
+<head>
 <meta charset="utf-8">
-<style>
+<title>Parkimorph: because boring subjects like parking deserve pretty pictures too</title>
+  <style type="text/css">
 
-.roads {
-  fill: #fff;
-  stroke: #333;
-}
+    .road {
+      fill-opacity: 0;
+      stroke: #333;
+    }
 
-#slider {
-  height: 10px;
-  border: solid 1px black;
-}
+    .building {
+      fill: #fafafa;
+      stroke: #aaa;
+    }
 
-#knob {
-  height: 10px;
-  width: 10px;
-  background: black;
-}
+    .park { fill: #efe; }
 
-</style>
+    .water { fill: #eef; }
+
+    body { margin: 0; padding: 0; }
+
+    #slider {
+      height: 10px;
+      border: solid 1px black;
+    }
+
+    #knob {
+      height: 10px;
+      width: 10px;
+      background: black;
+    }
+
+  </style>
+</head>
 <body>
 
 <div id="display"></div>
@@ -36,68 +50,64 @@
 
 window.addEvent('domready', function() {
 
-  var width = 960,
-      height = 700;
-
   var svg = d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", height);
+      .attr("width", window.innerWidth)
+      .attr("height", window.innerHeight);
 
   var radius = d3.scale.linear()
       .domain([0, 500])
-      .range([2, 20]);
+      .range([4, 20]);
 
   var colours = d3.scale.linear()
-      .domain([0, 1200])
-      .range(["#00ff00", "#ff0000"]);
-  // d3.scale.threshold()
-  //     .domain([.02, .04, .06, .08, .10])
-  //     .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"]);
-
+      .domain([0, 1])
+      .range(["#00cc00", "#ff0000"]);
 
   var projection = d3.geo.mercator()
-      .center([115.86, -31.95])
-      .scale(1000000);
-      // .rotate([4.4, 0])
-      // .parallels([50, 60])
-      //.translate([width / 2, height / 2]);
+      .center([115.865, -31.958])
+      .translate([Math.floor(window.innerWidth / 2), Math.floor(window.innerHeight / 2)])
+      .scale(1200 * window.innerWidth - 26000);
   var path = d3.geo.path().projection(projection);
-
-
-  var findTimeRange = function(point) {
-    return Object.keys(point.properties.spaces);
-
-    var times = Object.keys(point.properties.spaces);
-    times.sort();
-
-    var min = times[0];
-    var max = times[times.length - 1];
-
-    return [min, max];
-  }
-
-  var initial = {
-    time: "00:00"
-  }
 
   var valueAt = function(point, time) {
     return point.properties.spaces[time];
   }
 
+  var circleColours = function(point, time) {
+    return colours(valueAt(point, time) / point.properties.total);
+  }
+
   d3.json("map/perth.json", function(error, perth) {
     d3.json("data/perth-2013-05-27.json", function(error, parking) {
 
-      // find the range of times in the series from the first point, for displaying the slider
-      // (assume for now that all points have the same times, again due to laziness)
-      var range = findTimeRange(parking.features[0]);
+      // assume for now that all points have the same times, again due to laziness
+      var range = Object.keys(parking.features[0].properties.spaces);
 
-      var roads = topojson.feature(perth, perth.objects.roads);
-      var waterways = topojson.feature(perth, perth.objects.waterways);
+      var u = new URI();
+      var initial_time = "05:00";
+      if (u.getData('time') && range.indexOf(u.getData('time')) !== -1) {
+        initial_time = u.getData('time');
+      }
 
       svg.append("path")
-          .attr("class", "roads")
-          .datum(roads)
+          .attr("class", "park")
+          .datum(topojson.feature(perth, perth.objects.parks))
           .attr("d", path);
+
+      svg.append("path")
+          .attr("class", "water")
+          .datum(topojson.feature(perth, perth.objects.water))
+          .attr("d", path);
+
+      svg.append("path")
+          .attr("class", "building")
+          .datum(topojson.feature(perth, perth.objects.buildings))
+          .attr("d", path);
+
+      svg.append("path")
+          .attr("class", "road")
+          .datum(topojson.feature(perth, perth.objects.roads))
+          .attr("d", path);
+
 
       svg.selectAll(".symbol")
           .data(parking.features)
@@ -106,14 +116,11 @@ window.addEvent('domready', function() {
 
       var redraw = function(time) {
         svg.selectAll(".symbol")
-          .style("fill", function(d) { return colours(valueAt(d, time)); })
+          .style("fill", function(d) { return circleColours(d, time); })
           .attr("d", path.pointRadius(function(d) { return radius(valueAt(d, time)); }));
       }
 
-      redraw(initial.time);
-
-      // var slider_el = new Element('div', { id: 'slider' }).inject($$('svg'), 'after');
-      // var knob_el = new Element('div', { id: 'knob' }).inject(slider_el);
+      redraw(initial_time);
 
       $('slider').setStyle("width", (range.length * 5) + "px")
 
@@ -121,6 +128,7 @@ window.addEvent('domready', function() {
         $('slider'), $('knob'), {
         snap: true,
         range: [ 0, range.length - 1 ],
+        initialStep: range.indexOf(initial_time),
         onChange: function(index) {
           $('current_value').set('html', range[index]);
           redraw(range[index]);
@@ -136,4 +144,3 @@ window.addEvent('domready', function() {
 
 </body>
 </html>
-
