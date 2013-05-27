@@ -7,66 +7,138 @@
   stroke: #333;
 }
 
+#slider {
+  height: 10px;
+  border: solid 1px black;
+}
+
+#knob {
+  height: 10px;
+  width: 10px;
+  background: black;
+}
+
 </style>
 <body>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://d3js.org/topojson.v1.min.js"></script>
+
+<div id="display"></div>
+
+<div id="slider">
+  <div id="knob"></div>
+</div>
+<div id="current_value"></div>
+
+<script src="mootools-core-1.4.5-full-nocompat-yc.js"></script>
+<script src="mootools-more-1.4.0.1.js"></script>
+<script src="d3.v3.min.js"></script>
+<script src="topojson.v1.min.js"></script>
 <script type="text/javascript">
 
-var width = 960,
-    height = 700;
+window.addEvent('domready', function() {
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height);
+  var width = 960,
+      height = 700;
 
-var radius = d3.scale.linear()
-    .domain([0, 500])
-    .range([2, 20]);
+  var svg = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height);
 
-var colours = d3.scale.linear()
-    .domain([0, 500])
-    .range(["#ff0000", "#33e033"]);
-// d3.scale.threshold()
-//     .domain([.02, .04, .06, .08, .10])
-//     .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"]);
+  var radius = d3.scale.linear()
+      .domain([0, 500])
+      .range([2, 20]);
 
-
-var projection = d3.geo.mercator()
-    .center([115.86, -31.95])
-    .scale(1000000);
-    // .rotate([4.4, 0])
-    // .parallels([50, 60])
-    //.translate([width / 2, height / 2]);
-var path = d3.geo.path().projection(projection);
+  var colours = d3.scale.linear()
+      .domain([0, 500])
+      .range(["#ff0000", "#33e033"]);
+  // d3.scale.threshold()
+  //     .domain([.02, .04, .06, .08, .10])
+  //     .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"]);
 
 
+  var projection = d3.geo.mercator()
+      .center([115.86, -31.95])
+      .scale(1000000);
+      // .rotate([4.4, 0])
+      // .parallels([50, 60])
+      //.translate([width / 2, height / 2]);
+  var path = d3.geo.path().projection(projection);
 
-d3.json("map/perth.json", function(error, perth) {
-  d3.json("data/test.json", function(error, parking) {
 
-    console.log(perth);
-    console.log(parking);
+  // "spaces": {
+  //   "00:00": 360,
+  //   "00:05": 355,
+  //   "00:10": 350,
+  //   "00:15": 345,
+  //   "00:20": 340
+  // }
 
-    var roads = topojson.feature(perth, perth.objects.roads);
-    var waterways = topojson.feature(perth, perth.objects.waterways);
+  var findTimeRange = function(point) {
+    return Object.keys(point.properties.spaces);
 
-    svg.append("path")
-        .attr("class", "roads")
-        .datum(roads)
-        .attr("d", path);
+    var times = Object.keys(point.properties.spaces);
+    times.sort();
 
-    svg.selectAll(".symbol")
-        .data(parking.features)
-//         .data(parking.features.sort(function(a, b) { return b.properties.spaces - a.properties.spaces; }))
-      .enter().append("path")
-        .attr("class", "symbol")
-        .style("fill", function(d) { return colours(d.properties.spaces); })
-        .attr("d", path.pointRadius(function(d) { return radius(d.properties.spaces); }));
+    var min = times[0];
+    var max = times[times.length - 1];
 
+    return [min, max];
+  }
+
+  var initial = {
+    time: "00:00"
+  }
+
+  var valueAt = function(point, time) {
+    return point.properties.spaces[time];
+  }
+
+  d3.json("map/perth.json", function(error, perth) {
+    d3.json("data/test.json", function(error, parking) {
+
+      // find the range of times in the series from the first point, for displaying the slider
+      // (assume for now that all points have the same times, again due to laziness)
+      var range = findTimeRange(parking.features[0]);
+
+      var roads = topojson.feature(perth, perth.objects.roads);
+      var waterways = topojson.feature(perth, perth.objects.waterways);
+
+      svg.append("path")
+          .attr("class", "roads")
+          .datum(roads)
+          .attr("d", path);
+
+      svg.selectAll(".symbol")
+          .data(parking.features)
+          .enter().append("path")
+            .attr("class", "symbol");
+
+      var redraw = function(time) {
+        svg.selectAll(".symbol")
+          .style("fill", function(d) { return colours(valueAt(d, time)); })
+          .attr("d", path.pointRadius(function(d) { return radius(valueAt(d, time)); }));
+      }
+
+      redraw(initial.time);
+
+      // var slider_el = new Element('div', { id: 'slider' }).inject($$('svg'), 'after');
+      // var knob_el = new Element('div', { id: 'knob' }).inject(slider_el);
+
+      $('slider').setStyle("width", (range.length * 10) + "px")
+
+      var slider = new Slider(
+        $('slider'), $('knob'), {
+        snap: true,
+        range: [ 0, range.length - 1 ],
+        onChange: function(index) {
+          $('current_value').set('html', range[index]);
+          redraw(range[index]);
+        }
+      });
+
+    });
   });
-});
 
+});
 
 </script>
 
