@@ -44,18 +44,22 @@ fs.exists(process.argv[2], function (exists) {
       // now munge the crawl data into a displayable TopoJSON format
       var series = {};
 
+      var getTotalSpaces = function(carpark) {
+        return metadata[carpark].counts.regular + metadata[carpark].counts.acrod;
+      }
+
       // input format: { timestamp: { carpark_name: number_of_spaces } }
       for (var time in input) {
         for (var carpark in input[time]) {
           // we want to record spaces used, not spaces free
           var free_spaces = input[time][carpark];
-          var total_spaces = metadata[carpark].counts.regular + metadata[carpark].counts.acrod;
 
           if (!series[carpark]) { series[carpark] = {}; }
-          series[carpark][time] = total_spaces - free_spaces;
+          series[carpark][time] = getTotalSpaces(carpark) - free_spaces;
 
-          if (total_spaces - free_spaces < 0) {
-            console.log("Negative result:", carpark, "at", time, "was", total_spaces, "-", free_spaces);
+          if (getTotalSpaces(carpark) - free_spaces < 0) {
+            series[carpark][time] = 0;
+            console.log("Negative result:", carpark, "at", time, "was", getTotalSpaces(carpark), "-", free_spaces);
           }
         }
       }
@@ -73,6 +77,9 @@ fs.exists(process.argv[2], function (exists) {
 
         feature.properties.name = carpark;
         feature.properties.spaces = series[carpark];
+
+        // also store total, so we can compute percentage (for colours)
+        feature.properties.total = getTotalSpaces(carpark);
 
         // GeoJSON/TopoJSON expect longitude first!
         feature.geometry.coordinates = [
