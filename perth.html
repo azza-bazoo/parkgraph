@@ -48,8 +48,8 @@ window.addEvent('domready', function() {
       .range([2, 20]);
 
   var colours = d3.scale.linear()
-      .domain([0, 500])
-      .range(["#ff0000", "#33e033"]);
+      .domain([0, 1200])
+      .range(["#00ff00", "#ff0000"]);
   // d3.scale.threshold()
   //     .domain([.02, .04, .06, .08, .10])
   //     .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"]);
@@ -63,14 +63,6 @@ window.addEvent('domready', function() {
       //.translate([width / 2, height / 2]);
   var path = d3.geo.path().projection(projection);
 
-
-  // "spaces": {
-  //   "00:00": 360,
-  //   "00:05": 355,
-  //   "00:10": 350,
-  //   "00:15": 345,
-  //   "00:20": 340
-  // }
 
   var findTimeRange = function(point) {
     return Object.keys(point.properties.spaces);
@@ -93,7 +85,7 @@ window.addEvent('domready', function() {
   }
 
   d3.json("map/perth.json", function(error, perth) {
-    d3.json("data/test.json", function(error, parking) {
+    d3.json("data/perth-2013-05-27.json", function(error, parking) {
 
       // find the range of times in the series from the first point, for displaying the slider
       // (assume for now that all points have the same times, again due to laziness)
@@ -123,7 +115,7 @@ window.addEvent('domready', function() {
       // var slider_el = new Element('div', { id: 'slider' }).inject($$('svg'), 'after');
       // var knob_el = new Element('div', { id: 'knob' }).inject(slider_el);
 
-      $('slider').setStyle("width", (range.length * 10) + "px")
+      $('slider').setStyle("width", (range.length * 5) + "px")
 
       var slider = new Slider(
         $('slider'), $('knob'), {
