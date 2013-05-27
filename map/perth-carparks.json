@@ -1,123 +1,123 @@
 
 {
   "Elder Street": {
-    lat: -31.949693,
-    long: 115.850721,
-    counts: {
-      regular: 1053,
-      acrod: 11,
-      motorbike: 49,
-      bicycle: 54
+    "lat": -31.949693,
+    "long": 115.850721,
+    "counts": {
+      "regular": 1053,
+      "acrod": 11,
+      "motorbike": 49,
+      "bicycle": 54
     }
-  }
+  },
   "Convention Centre": {
-    lat: -31.956051,
-    long: 115.852321,
-    counts: {
-      regular: 1426,
-      acrod: 23,
-      motorbike: 70,
-      bicycle: 0
+    "lat": -31.956051,
+    "long": 115.852321,
+    "counts": {
+      "regular": 1426,
+      "acrod": 23,
+      "motorbike": 70,
+      "bicycle": 0
     }
   },
   "Pier Street": {
-    lat: -31.953663,
-    long: 115.862742,
-    counts: {
-      regular: 685,
-      acrod: 8,
-      motorbike: 14,
-      bicycle: 0
+    "lat": -31.953663,
+    "long": 115.862742,
+    "counts": {
+      "regular": 685,
+      "acrod": 8,
+      "motorbike": 14,
+      "bicycle": 0
     }
   },
   "Citiplace": {
-    lat: -31.951710,
-    long: 115.861038,
-    counts: {
-      regular: 479,
-      acrod: 5,
-      motorbike: 5,
-      bicycle: 0
+    "lat": -31.951710,
+    "long": 115.861038,
+    "counts": {
+      "regular": 479,
+      "acrod": 5,
+      "motorbike": 5,
+      "bicycle": 0
     }
   },
   "Roe Street": {
-    lat: -31.948591,
-    long: 115.856924,
-    counts: {
-      regular: 470,
-      acrod: 5,
-      motorbike: 4,
-      bicycle: 0
+    "lat": -31.948591,
+    "long": 115.856924,
+    "counts": {
+      "regular": 470,
+      "acrod": 5,
+      "motorbike": 4,
+      "bicycle": 0
     }
   },
   "Concert Hall": {
-    lat: -31.958376,
-    long: 115.863674,
-    counts: {
-      regular: 399,
-      acrod: 5,
-      motorbike: 12,
-      bicycle: 0
+    "lat": -31.958376,
+    "long": 115.863674,
+    "counts": {
+      "regular": 399,
+      "acrod": 5,
+      "motorbike": 12,
+      "bicycle": 0
     }
   },
   "Cultural Centre": {
-    lat: -31.950296,
-    long: 115.860048,
-    counts: {
-      regular: 315,
-      acrod: 5,
-      motorbike: 5,
-      bicycle: 0
+    "lat": -31.950296,
+    "long": 115.860048,
+    "counts": {
+      "regular": 315,
+      "acrod": 5,
+      "motorbike": 5,
+      "bicycle": 0
     }
   },
   "State Library": {
-    lat: -31.948940,
-    long: 115.860231,
-    counts: {
-      regular: 776,
-      acrod: 8,
-      motorbike: 11,
-      bicycle: 0
+    "lat": -31.948940,
+    "long": 115.860231,
+    "counts": {
+      "regular": 776,
+      "acrod": 8,
+      "motorbike": 11,
+      "bicycle": 0
     }
   },
   "Regal Place": {
-    lat: -31.953445,
-    long: 115.877317,
-    counts: {
-      regular: 289,
-      acrod: 4,
-      motorbike: 4,
-      bicycle: 0
+    "lat": -31.953445,
+    "long": 115.877317,
+    "counts": {
+      "regular": 289,
+      "acrod": 4,
+      "motorbike": 4,
+      "bicycle": 0
     }
   },
   "Terrace Road": {
-    lat: -31.959501,
-    long: 115.862814,
-    counts: {
-      regular: 776,
-      acrod: 8,
-      motorbike: 11,
-      bicycle: 0
+    "lat": -31.959501,
+    "long": 115.862814,
+    "counts": {
+      "regular": 776,
+      "acrod": 8,
+      "motorbike": 11,
+      "bicycle": 0
     }
   },
   "His Majesty's": {
-    lat: -31.952061,
-    long: 115.854329,
-    counts: {
-      regular: 613,
-      acrod: 6,
-      motorbike: 26,
-      bicycle: 0
+    "lat": -31.952061,
+    "long": 115.854329,
+    "counts": {
+      "regular": 613,
+      "acrod": 6,
+      "motorbike": 26,
+      "bicycle": 0
     }
   },
   "Goderich Street": {
-    lat: -31.957096,
-    long: 115.870958,
-    counts: {
-      regular: 176,
-      acrod: 2,
-      motorbike: 9,
-      bicycle: 0
+    "lat": -31.957096,
+    "long": 115.870958,
+    "counts": {
+      "regular": 176,
+      "acrod": 2,
+      "motorbike": 9,
+      "bicycle": 0
     }
   }
 }
