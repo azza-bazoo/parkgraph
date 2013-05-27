@@ -9,7 +9,7 @@ http.createServer(function(request, response) {
   var uri = url.parse(request.url).pathname
     , filename = path.join(process.cwd(), uri);
 
-  path.exists(filename, function(exists) {
+  fs.exists(filename, function(exists) {
     if(!exists) {
       response.writeHead(404, {"Content-Type": "text/plain"});
       response.write("404 Not Found\n");
@@ -27,7 +27,14 @@ http.createServer(function(request, response) {
         return;
       }
 
-      response.writeHead(200);
+      if (/\.html$/.test(filename)) {
+        response.writeHead(200, {"Content-Type": "text/html"});
+      } else if (/\.js$/.test(filename)) {
+        response.writeHead(200, {"Content-Type": "application/javascript"});
+      } else {
+        response.writeHead(200, {"Content-Type": "text/plain"});
+      }
+
       response.write(file, "binary");
       response.end();
     });
