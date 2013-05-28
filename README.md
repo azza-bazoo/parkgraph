@@ -33,7 +33,7 @@ Here are some similar efforts: [Lisbon](http://vimeo.com/10218235), [London](htt
 
 Well, sort of. Each circle's radius is proportional to `total_spaces - free_spaces` for a car park, and its colour corresponds to the ratio of that value over `total_spaces`.
 
-But the web data doesn't distinguish spaces that are reserved (for monthly permit holders, etc.), and these show on the graph as always in use -- even very late at night.
+But the published numbers don't distinguish spaces that are reserved (for monthly permit holders, etc.), and these show on the map as always in use -- even very late at night.
 
 
 ## Generating the base map
