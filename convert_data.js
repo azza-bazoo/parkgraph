@@ -13,7 +13,7 @@ if (process.argv.length < 3) {
 }
 
 
-var metadata_file = "map/perth-carparks.json";
+var metadata_file = "map/metadata-perth.json";
 
 var matches = process.argv[2].match(/(\d{4}-\d{2}-\d{2})/);
 var output_file = "data/perth-" + matches[1] + ".json";
