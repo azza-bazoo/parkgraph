@@ -126,3 +126,5 @@ h1 { font-weight: normal; }
   margin: 0;
   font-size: 11px;
 }
+
+#tooltip .time { font-style: italic; }
