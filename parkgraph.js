@@ -1,6 +1,7 @@
 var data = {};
 
 window.addEvent('domready', function() {
+  var tooltip_tween;
 
   var svg = d3.select("#display").append("svg")
       .attr("width", window.innerWidth)
@@ -66,10 +67,14 @@ window.addEvent('domready', function() {
       initial_time = u.getData('time');
     }
 
+    var current_time;
+
     svg.selectAll(".symbol")
       .data(data.values.features)
       .enter()
-        .append("path").attr("class", "symbol");
+        .append("path")
+        .attr("class", "symbol")
+        .append("title").text(function(d) { return d.properties.name });
 
     var symbols = svg.selectAll(".symbol");
 
@@ -81,16 +86,69 @@ window.addEvent('domready', function() {
 
     redraw(initial_time);
 
+    $$(symbols[0]).addEvent('mouseover', function(e) {
+      var name = e.target.childNodes[0].textContent;
+
+      // find the Feature object corresponding to this point (dumb, yes, but non-slow enough for our needs)
+      for (var i = 0; i < data.values.features.length; i ++) {
+        if (name == data.values.features[i].properties.name) {
+          var used_spaces = data.values.features[i].properties.spaces[current_time];
+          var total_spaces = data.values.features[i].properties.total;
+          break;
+        }
+      }
+
+      $('tooltip').set('html',
+        "<h3>" + name + "</h3>"
+        + "<p>At " + current_time + ":</p>"
+        + "<p>" + used_spaces + " spaces used</p>"
+        + "<p>" + (total_spaces - used_spaces) + " spaces free</p>"
+      );
+
+      var position = e.target.getBoundingClientRect();
+
+      if (tooltip_tween) {  tooltip_tween.cancel(); }
+
+      if ($('tooltip').getStyle('display') !== 'block') {
+        tooltip_tween = new Fx.Tween('tooltip', { duration: 250, property: 'opacity' }).start(0, 0.9).chain(
+          function(){
+            tooltip_tween = null;
+          }
+        );
+      }
+
+      $('tooltip').setStyles({
+        display: 'block',
+        top: position.top + position.height + 5,
+        left: (position.left + position.width / 2) - 90
+      });
+    });
+
     var slider = new Slider(
       $('slider'), $('knob'), {
       range: [ 0, range.length - 1 ],
       initialStep: range.indexOf(initial_time),
       onChange: function(index) {
+        current_time = range[index];
         $('current_value').set('html', range[index]);
+
+        fadeOutTooltip();
         redraw(range[index]);
       }
     });
   }
+
+  var fadeOutTooltip = function() {
+    tooltip_tween = new Fx.Tween('tooltip', { duration: 250, property: 'opacity' }).start(0.9, 0).chain(
+      function(){
+        $('tooltip').setStyle('display', 'none');
+        tooltip_tween = null;
+      }
+    );
+  }
+
+  $('tooltip').addEvent('mouseleave', fadeOutTooltip);
+
 
   d3.json("map/perth.json", function(error, perth) {
     d3.json("data/perth-2013-05-27.json", function(error, parking) {

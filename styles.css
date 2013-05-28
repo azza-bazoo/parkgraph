@@ -68,6 +68,8 @@ h1 { font-weight: normal; }
   text-decoration: none;
 }
 
+#loading a:hover { background: #933; }
+
 #slider {
   height: 20px;
   background: #555;
@@ -100,4 +102,28 @@ h1 { font-weight: normal; }
   border-radius: 5px;
   float: right;
   font-size: 32px;
+}
+
+#tooltip {
+  /* poor man's tooltips: recycle one element rather than using a library */
+  position: absolute;
+  width: 170px;
+  padding: 5px;
+  text-align: center;
+  font-family: "Merriweather", serif;
+  background: #333;
+  color: #fff;
+  border-radius: 5px;
+}
+
+#tooltip h3 {
+  font-weight: normal;
+  font-size: 16px;
+  border-bottom: solid 1px #555;
+  margin: 0 0 8px 0;
+}
+
+#tooltip p {
+  margin: 0;
+  font-size: 11px;
 }
