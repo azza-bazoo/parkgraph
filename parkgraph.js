@@ -30,6 +30,33 @@ window.addEvent('domready', function() {
   }
 
   var drawMap = function() {
+    svg.append("path")
+      .attr("class", "water")
+      .datum(topojson.feature(data.map, data.map.objects.rivers))
+      .attr("d", path);
+
+    svg.append("path")
+      .attr("class", "park")
+      .datum(topojson.feature(data.map, data.map.objects.parks))
+      .attr("d", path);
+
+    svg.append("path")
+      .attr("class", "water")
+      .datum(topojson.feature(data.map, data.map.objects.lakes))
+      .attr("d", path);
+
+    svg.append("path")
+      .attr("class", "building")
+      .datum(topojson.feature(data.map, data.map.objects.buildings))
+      .attr("d", path);
+
+    svg.append("path")
+      .attr("class", "road")
+      .datum(topojson.feature(data.map, data.map.objects.roads))
+      .attr("d", path);
+  }
+
+  var drawSymbolsAndSlider = function() {
     // assume for now that all points have the same times, again due to laziness
     var range = Object.keys(data.values.features[0].properties.spaces);
 
@@ -39,39 +66,15 @@ window.addEvent('domready', function() {
       initial_time = u.getData('time');
     }
 
-    svg.append("path")
-        .attr("class", "water")
-        .datum(topojson.feature(data.map, data.map.objects.rivers))
-        .attr("d", path);
-
-    svg.append("path")
-        .attr("class", "park")
-        .datum(topojson.feature(data.map, data.map.objects.parks))
-        .attr("d", path);
-
-    svg.append("path")
-        .attr("class", "water")
-        .datum(topojson.feature(data.map, data.map.objects.lakes))
-        .attr("d", path);
-
-    svg.append("path")
-        .attr("class", "building")
-        .datum(topojson.feature(data.map, data.map.objects.buildings))
-        .attr("d", path);
-
-    svg.append("path")
-        .attr("class", "road")
-        .datum(topojson.feature(data.map, data.map.objects.roads))
-        .attr("d", path);
-
-
     svg.selectAll(".symbol")
-        .data(data.values.features)
-        .enter().append("path")
-          .attr("class", "symbol");
+      .data(data.values.features)
+      .enter()
+        .append("path").attr("class", "symbol");
+
+    var symbols = svg.selectAll(".symbol");
 
     var redraw = function(time) {
-      svg.selectAll(".symbol")
+      symbols
         .style("fill", function(d) { return circleColours(d, time); })
         .attr("d", path.pointRadius(function(d) { return radius(valueAt(d, time)); }));
     }
@@ -94,7 +97,10 @@ window.addEvent('domready', function() {
       data.map = perth;
       data.values = parking;
 
-      $('loading').set('html', "<a href=\"#\">&#8227; Ready to go!</a>")
+      drawMap();
+
+      $('loading').set('html', "<a href=\"#\">&#8227; Ready to go!</a>");
+
       $$('#loading a').addEvent('click', function(e) {
         e.preventDefault();
 
@@ -117,7 +123,7 @@ window.addEvent('domready', function() {
             'top': [200, window.innerHeight - 170]
         });
 
-        drawMap();
+        drawSymbolsAndSlider();
 
         activate_animation.addEvent('complete', function() {
           // start D3 animation
