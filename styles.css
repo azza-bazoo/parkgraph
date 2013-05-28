@@ -1,4 +1,4 @@
-/* SVG */
+/** SVG **/
 
 .building {
   fill: #fafafa;
@@ -14,7 +14,7 @@
 .park { fill: #efe; }
 .water { fill: #eef; }
 
-/* HTML */
+/** Basic layout and type **/
 
 body { margin: 0; padding: 0; }
 
@@ -27,6 +27,16 @@ body { margin: 0; padding: 0; }
   left: 0;
 }
 
+#black_box, #tooltip {
+  font-family: "Merriweather", serif;
+  background: #333;
+  color: #fff;
+}
+
+h1, h3 { font-weight: normal; }
+
+/** Initial load screen and intro text **/
+
 #black_box {
   position: absolute;
   top: 200px;
@@ -34,25 +44,11 @@ body { margin: 0; padding: 0; }
   height: 250px;
   width: 400px;
   padding: 20px;
-  color: #fff;
-  font-family: "Merriweather", serif;
   border-radius: 10px;
-  background: #333;
   opacity: 0.9;
 }
 
-h1 { font-weight: normal; }
-
 #blurb a { color: #fff; }
-
-#credits {
-  clear: both;
-  padding-top: 20px;
-  font-size: 11px;
-  text-align: right;
-}
-
-#credits, #credits a { color: #e0e0e0; }
 
 #loading {
   font-weight: bold;
@@ -69,6 +65,19 @@ h1 { font-weight: normal; }
 }
 
 #loading a:hover { background: #933; }
+
+/** Control panel links **/
+
+#credits {
+  clear: both;
+  padding-top: 20px;
+  font-size: 11px;
+  text-align: right;
+}
+
+#credits, #credits a { color: #e0e0e0; }
+
+/** Time slider **/
 
 #slider {
   height: 20px;
@@ -103,20 +112,19 @@ h1 { font-weight: normal; }
   font-size: 32px;
 }
 
+/** Tooltips **/
+/* (these are cheap-and-nasty tooltips built with one
+ manually-created element, rather than using a library) */
+
 #tooltip {
-  /* poor man's tooltips: recycle one element rather than using a library */
   position: absolute;
   width: 170px;
   padding: 5px;
   text-align: center;
-  font-family: "Merriweather", serif;
-  background: #333;
-  color: #fff;
   border-radius: 5px;
 }
 
 #tooltip h3 {
-  font-weight: normal;
   font-size: 16px;
   border-bottom: solid 1px #555;
   margin: 0 0 8px 0;
