@@ -2,6 +2,10 @@ var data = {};
 
 window.addEvent('domready', function() {
   var tooltip_tween;
+  var slider;
+  var range;
+  var current_time;
+  var data_animation;
 
   var svg = d3.select("#display").append("svg")
       .attr("width", window.innerWidth)
@@ -59,15 +63,13 @@ window.addEvent('domready', function() {
 
   var drawSymbolsAndSlider = function() {
     // assume for now that all points have the same times, again due to laziness
-    var range = Object.keys(data.values.features[0].properties.spaces);
+    range = Object.keys(data.values.features[0].properties.spaces);
 
     var u = new URI();
     var initial_time = "05:00";
     if (u.getData('time') && range.indexOf(u.getData('time')) !== -1) {
       initial_time = u.getData('time');
     }
-
-    var current_time;
 
     svg.selectAll(".symbol")
       .data(data.values.features)
@@ -124,7 +126,7 @@ window.addEvent('domready', function() {
       });
     });
 
-    var slider = new Slider(
+    slider = new Slider(
       $('slider'), $('knob'), {
       range: [ 0, range.length - 1 ],
       initialStep: range.indexOf(initial_time),
@@ -148,7 +150,6 @@ window.addEvent('domready', function() {
   }
 
   $('tooltip').addEvent('mouseleave', fadeOutTooltip);
-
 
   d3.json("map/perth.json", function(error, perth) {
     d3.json("data/perth-2013-05-27.json", function(error, parking) {
@@ -184,7 +185,13 @@ window.addEvent('domready', function() {
         drawSymbolsAndSlider();
 
         activate_animation.addEvent('complete', function() {
-          // start D3 animation
+          data_animation = (function(){
+            if (current_time >= '21:00') {
+              clearInterval(data_animation);
+            } else {
+              slider.set(slider.step + 1);
+            }
+          }).periodical(20);
         });
       });
 
