@@ -1,3 +1,4 @@
+// Parkgraph - a D3.js map visualisation
 
 var tooltip = {
   tween: null,
@@ -8,6 +9,7 @@ var tooltip = {
     return (tooltip.el.getStyle('display') === 'block');
   },
 
+  // apply a MooTools Fx.Tween to fade out the tooltip, then set it to display:none
   fadeOut: function() {
     tooltip.tween = new Fx.Tween(
       tooltip.el,
@@ -20,6 +22,9 @@ var tooltip = {
     );
   },
 
+  // set tooltip contents with carpark name (or the last name displayed),
+  // and value at the given display time, which we find by looping over
+  // symbols.data (cheating, yes, but it's only a 12-element array)
   updateText: function(name, current_time) {
     if (!name) {
       name = tooltip.last_displayed_name;
@@ -27,7 +32,7 @@ var tooltip = {
       tooltip.last_displayed_name = name;
     }
 
-    // find the Feature object corresponding to this point (dumb, yes, but non-slow enough for our needs)
+    // find the Feature object corresponding to this point
     for (var i = 0; i < symbols.data.features.length; i ++) {
       if (name == symbols.data.features[i].properties.name) {
         var used_spaces = symbols.data.features[i].properties.spaces[current_time];
@@ -44,6 +49,10 @@ var tooltip = {
     );
   },
 
+  // event handler for mouseovers on graph symbols (the circles representing utilisation)
+  //  - set text in the tooltip element
+  //  - fade in, if appropriate (we don't fade when just moving the tooltip)
+  //  - position tooltip relative to the graph symbol
   generateAndDisplay: function(e) {
     tooltip.updateText(
       e.target.childNodes[0].textContent,
@@ -67,6 +76,7 @@ var tooltip = {
     });
   },
 
+  // tooltip setup: add a mouseover event to display it, and mouseleave to hide
   init: function(svg_symbols) {
     svg_symbols.addEvent('mouseover', tooltip.generateAndDisplay);
 
@@ -80,6 +90,10 @@ var slider = {
   values: [],
   initial_time: "05:00",
 
+  // event handler for changes in the time slider:
+  //  - redraw graph symbols with new colours and radii
+  //  - update the current time element
+  //  - if a tooltip is visible, update it
   onChange: function(index) {
     $('current_value').set('html', slider.values[index]);
 
@@ -90,6 +104,8 @@ var slider = {
     }
   },
 
+  // set up and display the time slider, starting at 5am by default
+  // (start time can be changed with ?time=12:00 on the page URL)
   init: function() {
     var u = new URI();
     if (u.getData('time') && slider.values.indexOf(u.getData('time')) !== -1) {
@@ -113,6 +129,8 @@ var symbols = {
   elements: [],
   data: {},
 
+  // set up D3.js scales for circle radius and colour
+  // (lifted more or less directly from the examples)
   radius: d3.scale.linear()
       .domain([0, 500])
       .range([4, 20]),
@@ -121,14 +139,19 @@ var symbols = {
       .domain([0, 1])
       .range(["#00cc00", "#ff0000"]),
 
+  // not-much-of-a convenience function to get value of point at time
   valueAt: function(point, time) {
     return point.properties.spaces[time];
   },
 
+  // return the appropriate colour for the circle around point at time,
+  // based on its percentage of fullness (#f00 at 100%, #0c0 at 0%)
   circleColours: function(point, time) {
     return symbols.colours(symbols.valueAt(point, time) / point.properties.total);
   },
 
+  // create SVG elements for the graph symbols (the circles showing utilisation);
+  // this is lifted from the D3 examples and likely has room for optimisation
   initial_draw: function() {
     map.el.selectAll(".symbol")
       .data(symbols.data.features)
@@ -142,6 +165,7 @@ var symbols = {
     symbols.redraw(slider.initial_time);
   },
 
+  // update the symbol elements with new radii/colours to suit values at the given time
   redraw: function(time) {
     symbols.elements
       .style("fill", function(d) { return symbols.circleColours(d, time); })
@@ -157,6 +181,8 @@ var map = {
 
   data: {},
 
+  // create an <svg> element in the absolutely-positioned div#display,
+  // and set up D3.js projections and paths inside it
   init: function() {
     map.el = d3.select("#display").append("svg")
         .attr("width", window.innerWidth)
@@ -170,6 +196,8 @@ var map = {
     map.path = d3.geo.path().projection(map.projection);
   },
 
+  // create SVG paths for the five types of data we yoinked from OpenStreetMap
+  // (in generate_topojson.sh); each is coloured differently in CSS
   draw: function() {
     map.el.append("path")
       .attr("class", "water")
@@ -202,6 +230,9 @@ var map = {
 var visualisation = {
   interval: null,
 
+  // try to trigger an "ooh, aah" out of the user by advancing
+  // the slider every 20ms when they click the "go" button
+  // (by default, runs from 5am to 9pm)
   advance: function() {
     if (slider.values[slider.Slider.step] >= '21:00') {
       clearInterval(visualisation.interval);
@@ -219,6 +250,13 @@ var visualisation = {
 var load_screen = {
   animation: null,
 
+  // event handler for the "ready to go" button:
+  //  - animate the black overlay from its initial central position
+  //    to being a control box at the bottom of the screen
+  //    (also, hide text and show the actual controls)
+  //  - create SVG elements for the graph symbols
+  //  - set up time slider and the tooltip widget
+  //  - kick off the visualisation animation
   startEverything: function(e) {
     e.preventDefault();
 
@@ -251,6 +289,8 @@ var load_screen = {
     });
   },
 
+  // display a "ready to go" button after JSON loading
+  // is done and the base map has been drawn
   ready: function() {
     $('loading').set('html', "<a href=\"#\">&#8227; Ready to go!</a>");
     $$('#loading a').addEvent('click', load_screen.startEverything);
