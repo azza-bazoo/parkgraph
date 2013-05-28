@@ -17,7 +17,7 @@ var numberFormat = function(num) {
   return padding + num;
 }
 
-var output_file = 'data/' + now.getFullYear() + '-' + numberFormat(now.getMonth() + 1) + '-' + numberFormat(now.getDate()) + '.json';
+var output_file = 'data/crawl-perth-' + now.getFullYear() + '-' + numberFormat(now.getMonth() + 1) + '-' + numberFormat(now.getDate()) + '.json';
 
 
 
