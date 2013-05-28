@@ -1,6 +1,6 @@
 //
 // crontab for this file:
-// */5 *       *       *       *       cd ~/parkimorph; /usr/local/bin/node crawler.js
+// */5 *       *       *       *       cd ~/parkgraph; /usr/local/bin/node crawler.js
 //
 
 var http = require('http');
