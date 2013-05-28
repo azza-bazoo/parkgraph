@@ -78,11 +78,8 @@ window.addEvent('domready', function() {
 
     redraw(initial_time);
 
-    $('slider').setStyle("width", (range.length * 5) + "px")
-
     var slider = new Slider(
       $('slider'), $('knob'), {
-      snap: true,
       range: [ 0, range.length - 1 ],
       initialStep: range.indexOf(initial_time),
       onChange: function(index) {
@@ -103,15 +100,22 @@ window.addEvent('domready', function() {
 
         var activate_animation = new Fx.Morph('black_box');
 
-        activate_animation.start({
-            'height': [250, 100],
-            'width': [400, window.innerWidth - 100 - 40],
-            'left': [250, 50],
-            'top': [200, window.innerHeight - 200]
-        });
+        var new_block_width = window.innerWidth - 100 - 40;
+        $('slider').setStyle('width', new_block_width - 120 - 20);
 
-        $('blurb').setStyle('display', 'none');
+        new Fx.Tween('blurb', { property: 'opacity' }).start(1, 0).chain(
+            function(){ $('blurb').setStyle('display', 'none'); }
+        );
+
         $('controls').setStyle('display', 'block');
+        $('controls').fade('in');
+
+        activate_animation.start({
+            'height': [250, 85],
+            'width': [400, new_block_width],
+            'left': [250, 50],
+            'top': [200, window.innerHeight - 170]
+        });
 
         drawMap();
 
