@@ -84,13 +84,12 @@ h1 { font-weight: normal; }
 }
 
 #grab {
-  border-right: 1px solid #aaa;
-  border-left: 3px double #aaa;
   position: absolute;
   height: 13px;
-  width: 1px;
+  width: 5px;
   left: 3px;
   top: 4px;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAABCAIAAACZnPOkAAAAEUlEQVQI12NYtWoVAwMDnAQAL+AF+/d3TzAAAAAASUVORK5CYII=") repeat-y;
 }
 
 #current_value {
